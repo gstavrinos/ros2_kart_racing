@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>kart_simulation</name>
+  <version>0.9.0</version>
+  <description>Kart simulation related files</description>
+  <maintainer email="gstavrinos@protonmail.com">George Stavrinos</maintainer>
+  <license>Apache License 2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>ros2_control</exec_depend>
+  <exec_depend>gazebo_plugins</exec_depend>
+  <exec_depend>ros2controlcli</exec_depend>
+  <exec_depend>control_toolbox</exec_depend>
+  <exec_depend>ros2_controllers</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>effort_controllers</exec_depend>
+  <exec_depend>gazebo_ros2_control</exec_depend>
+  <exec_depend>velocity_controllers</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
+  <exec_depend>transmission_interface</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
