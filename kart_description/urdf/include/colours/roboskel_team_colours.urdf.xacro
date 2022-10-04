@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<robot name="kart_colours" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:macro name="team_colours">
+        <!-- List of Gazebo materials/colours -->
+        <!-- cat /usr/share/gazebo-11/media/materials/scripts/gazebo.material | grep material -->
+
+        <material name="rear_left_wheel_colour">
+            <color rgba="0.2 0.2 0.2 1"/>
+        </material>
+
+        <gazebo reference="rear_left_wheel_link_01">
+            <material>Gazebo/DarkGray</material>
+        </gazebo>
+
+        <material name="rear_right_wheel_colour">
+            <color rgba="0.2 0.2 0.2 1"/>
+        </material>
+
+        <gazebo reference="rear_right_wheel_link_01">
+            <material>Gazebo/DarkGray</material>
+        </gazebo>
+
+        <material name="chassis_colour">
+            <color rgba="0.2 0.2 0.2 1"/>
+        </material>
+
+        <gazebo reference="chassis_link_01">
+            <material>Gazebo/Black</material>
+        </gazebo>
+
+        <material name="engine_colour">
+            <color rgba="0.5 0.5 0.5 1"/>
+        </material>
+
+        <gazebo reference="engine_link_01">
+            <material>Gazebo/FlatBlack</material>
+        </gazebo>
+
+        <material name="exhaust_colour">
+            <color rgba="0.4 0.4 0.4 1"/>
+        </material>
+
+        <gazebo reference="exhaust_link_01">
+            <material>Gazebo/FlatBlack</material>
+        </gazebo>
+
+        <material name="front_bottom_bumper_colour">
+            <color rgba="0.7 0.7 0.2 1"/>
+        </material>
+
+        <gazebo reference="front_bottom_bumper_link_01">
+            <material>Gazebo/Yellow</material>
+        </gazebo>
+
+        <material name="front_mid_bumper_colour">
+            <color rgba="0.2 0.2 0.2 1"/>
+        </material>
+
+        <gazebo reference="front_mid_bumper_link_01">
+            <material>Gazebo/FlatBlack</material>
+        </gazebo>
+
+        <material name="front_top_bumper_colour">
+            <color rgba="0.7 0.7 0.2 1"/>
+        </material>
+
+        <gazebo reference="front_top_bumper_link_01">
+            <material>Gazebo/Yellow</material>
+        </gazebo>
+
+        <material name="front_top_bumper_frame_colour">
+            <color rgba="0.7 0.7 0.7 1"/>
+        </material>
+
+        <gazebo reference="front_top_bumper_frame_link_01">
+            <material>Gazebo/Gray</material>
+        </gazebo>
+
+        <material name="front_wheel_base_colour">
+            <color rgba="0.7 0.1 0.1 1"/>
+        </material>
+
+        <gazebo reference="front_right_wheel_base_link_01">
+            <material>Gazebo/Red</material>
+        </gazebo>
+
+        <gazebo reference="front_left_wheel_base_link_01">
+            <material>Gazebo/Red</material>
+        </gazebo>
+
+        <material name="front_left_wheel_colour">
+            <color rgba="0.2 0.2 0.2 1"/>
+        </material>
+
+        <gazebo reference="front_left_wheel_link_01">
+            <material>Gazebo/DarkGray</material>
+        </gazebo>
+
+        <material name="front_right_wheel_colour">
+            <color rgba="0.2 0.2 0.2 1"/>
+        </material>
+
+        <gazebo reference="front_right_wheel_link_01">
+            <material>Gazebo/DarkGray</material>
+        </gazebo>
+
+        <material name="inner_bumper_colour">
+            <color rgba="0.7 0.7 0.2 1"/>
+        </material>
+
+        <gazebo reference="inner_bumper_link_01">
+            <material>Gazebo/Yellow</material>
+        </gazebo>
+
+        <material name="left_bumper_colour">
+            <color rgba="0.7 0.7 0.2 1"/>
+        </material>
+
+        <gazebo reference="left_bumper_link_01">
+            <material>Gazebo/Yellow</material>
+        </gazebo>
+
+        <material name="rear_bumper_colour">
+            <color rgba="0.7 0.7 0.2 1"/>
+        </material>
+
+        <gazebo reference="rear_bumper_link_01">
+            <material>Gazebo/Yellow</material>
+        </gazebo>
+
+        <material name="rear_differential_axle_colour">
+            <color rgba="0.7 0.1 0.1 1"/>
+        </material>
+
+        <gazebo reference="rear_differential_axle_link_01">
+            <material>Gazebo/Red</material>
+        </gazebo>
+
+        <material name="right_bumper_colour">
+            <color rgba="0.7 0.7 0.2 1"/>
+        </material>
+
+        <gazebo reference="right_bumper_link_01">
+            <material>Gazebo/Yellow</material>
+        </gazebo>
+
+        <material name="seat_colour">
+            <color rgba="0.6 0.2 0.1 1"/>
+        </material>
+
+        <gazebo reference="seat_link_01">
+            <material>Gazebo/Orange</material>
+        </gazebo>
+
+        <material name="steering_axle_colour">
+            <color rgba="0.7 0.1 0.1 1"/>
+        </material>
+
+        <gazebo reference="steering_right_axle_link_01">
+            <material>Gazebo/Red</material>
+        </gazebo>
+
+        <gazebo reference="steering_left_axle_link_01">
+            <material>Gazebo/Red</material>
+        </gazebo>
+
+        <material name="steering_base_colour">
+            <color rgba="0.7 0.1 0.1 1"/>
+        </material>
+
+        <gazebo reference="steering_base_link_01">
+            <material>Gazebo/Red</material>
+        </gazebo>
+
+        <material name="steering_wheel_colour">
+            <color rgba="0.7 0.7 0.7 1"/>
+        </material>
+
+        <gazebo reference="steering_wheel_link_01">
+            <material>Gazebo/Gray</material>
+        </gazebo>
+
+        <material name="driver_helmet_colour">
+            <color rgba="0.9 0.9 0.9 1"/>
+        </material>
+
+        <gazebo reference="driver_head_link_01">
+            <material>Gazebo/Blue</material>
+        </gazebo>
+    </xacro:macro>
+</robot>

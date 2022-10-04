@@ -1,0 +1,487 @@
+<?xml version="1.0"?>
+<robot name="kart" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:property name="PI" value="3.1415926535897931"/>
+    <xacro:property name="scale" value="0.015"/>
+    <xacro:property name="distance_from_ground" value="0.02"/>
+    <xacro:include filename="$(find kart_description)/urdf/include/imu.urdf.xacro"/>
+    <xacro:include filename="$(find kart_description)/urdf/include/rear_wheel.urdf.xacro"/>
+    <xacro:include filename="$(find kart_description)/urdf/include/front_wheel.urdf.xacro"/>
+    <xacro:include filename="$(find kart_description)/urdf/include/stereo_camera.urdf.xacro"/>
+    <xacro:include filename="$(find kart_description)/urdf/include/laser.urdf.xacro"/>
+    <xacro:include filename="$(find kart_description)/urdf/include/gazebo_simulation.urdf.xacro"/>
+	<xacro:macro name="kart" params="name_suffix">
+
+        <!-- Chassis -->
+        <link name="base_link${name_suffix}"/>
+
+        <link name="chassis_link${name_suffix}">
+            <inertial>
+                <mass value="1000"/>
+                <origin xyz="0 0 ${distance_from_ground}" rpy="0 0 0"/>
+                <inertia  ixx="33.74014542098148" ixy="0" ixz="0" iyy="87.35198024088339" iyz="0" izz="108.41919694284842" />
+
+            </inertial>
+            <visual>
+                <origin xyz="0 0 ${distance_from_ground}" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_chassis.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="chassis_colour"/>
+            </visual>
+            <collision>
+                <origin xyz="0 0 ${distance_from_ground}" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${scale*60} ${scale*25} ${scale*5}" />
+                </geometry>
+            </collision>
+        </link>
+        
+        <joint name="chassis_joint${name_suffix}" type="fixed">
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <parent link="base_link${name_suffix}" />"
+            <child link="chassis_link${name_suffix}" />"
+        </joint>
+
+    <!-- Steering system -->
+    <link name="steering_wheel_link${name_suffix}">
+        <inertial>
+            <mass value="15"/>
+            <origin xyz="0 0 0"/>
+            <inertia  ixx="0.05467127258117856" ixy="0" ixz="0" iyy="0.09447491929680661" iyz="0" izz="0.09997070057659316" />
+        </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_steering_wheel.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="steering_wheel_colour"/>
+            </visual>
+    </link>
+
+    <joint name="steering_wheel_joint${name_suffix}" type="revolute">
+        <origin xyz="0.102 -0.009 0.18" rpy="0 ${PI/3.5} 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="steering_wheel_link${name_suffix}" />
+        <axis xyz="-1 0 0" />
+        <limit lower="${-PI/2}" upper="${PI/2}" effort="100000" velocity="0.95"/>
+        <dynamics damping="10" friction="0.3" />
+    </joint>
+
+    <link name="steering_base_link${name_suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_steering_base.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="steering_base_colour"/>
+            </visual>
+    </link>
+
+    <joint name="steering_base_joint${name_suffix}" type="fixed">
+        <origin xyz="0.17 0 -0.005" rpy="0 -${PI/3.5} 0" />
+        <parent link="steering_wheel_link${name_suffix}" />
+        <child link="steering_base_link${name_suffix}" />
+    </joint>
+
+    <link name="steering_right_axle_link${name_suffix}">
+        <inertial>
+            <mass value="5"/>
+            <origin xyz="0 0 0"/>
+            <inertia  ixx="0.018339078228121298" ixy="0" ixz="0" iyy="0.00034694873154057993" iyz="0" izz="0.018164392927789895" />
+        </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_steering_axle.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="steering_axle_colour"/>
+            </visual>
+    </link>
+
+    <joint name="steering_right_axle_joint${name_suffix}" type="fixed">
+        <origin xyz="0.26 -0.135 0.03" rpy="0 0 -${5*PI/6}" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="steering_right_axle_link${name_suffix}" />
+    </joint>
+
+    <link name="front_right_wheel_base_link${name_suffix}">
+			<inertial>
+				<mass value="3.0" />
+                <origin xyz="0 0 0" />
+                <inertia  ixx="0.0020746546345429876" ixy="0" ixz="0" iyy="0.0014771914941329126" iyz="0" izz="0.0029880406372950075" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0.01" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_front_wheel_base.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="front_wheel_base_colour"/>
+            </visual>
+    </link>
+
+    <joint name="front_right_wheel_base_joint${name_suffix}" type="revolute">
+        <origin xyz="0 0.08 0" rpy="${PI} 0 ${5*PI/6}" />
+        <parent link="steering_right_axle_link${name_suffix}" />
+        <child link="front_right_wheel_base_link${name_suffix}" />
+        <axis xyz="0 0 -1" />
+        <limit lower="${-PI/5}" upper="${PI/5}" effort="100000" velocity="0.95"/>
+        <dynamics damping="10" friction="0.3" />
+        <mimic joint="steering_wheel_joint${name_suffix}" multiplier="0.2" offset="0" />
+    </joint>
+
+    <link name="steering_left_axle_link${name_suffix}">
+        <inertial>
+            <mass value="5"/>
+            <origin xyz="0 0 0"/>
+            <inertia  ixx="0.018339078228121298" ixy="0" ixz="0" iyy="0.00034694873154057993" iyz="0" izz="0.018164392927789895" />
+        </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_steering_axle.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="steering_axle_colour"/>
+            </visual>
+    </link>
+
+    <joint name="steering_left_axle_joint${name_suffix}" type="fixed">
+        <origin xyz="0.26 0.135 0.03" rpy="0 0 -${PI/6}" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="steering_left_axle_link${name_suffix}" />
+    </joint>
+
+    <link name="front_left_wheel_base_link${name_suffix}">
+			<inertial>
+				<mass value="3.0" />
+                <origin xyz="0 0 0" />
+                <inertia  ixx="0.0020746546345429876" ixy="0" ixz="0" iyy="0.0014771914941329126" iyz="0" izz="0.0029880406372950075" />
+            </inertial>
+            <visual>
+                <origin xyz="0 -0.01 0.01" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_front_wheel_base.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="front_wheel_base_colour"/>
+            </visual>
+    </link>
+
+    <joint name="front_left_wheel_base_joint${name_suffix}" type="revolute">
+        <origin xyz="0 0.08 0" rpy="0 0 ${PI/6}" />
+        <parent link="steering_left_axle_link${name_suffix}" />
+        <child link="front_left_wheel_base_link${name_suffix}" />
+        <axis xyz="0 0 1" />
+        <limit lower="${-PI/5}" upper="${PI/5}" effort="100000" velocity="0.95"/>
+        <dynamics damping="10" friction="0.3" />
+        <mimic joint="steering_wheel_joint${name_suffix}" multiplier="-0.2" offset="0" />
+    </joint>
+
+    <!-- Engine & Exhaust -->
+    <link name="engine_link${name_suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_engine.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="engine_colour"/>
+            </visual>
+    </link>
+
+    <joint name="engine_joint${name_suffix}" type="fixed">
+        <origin xyz="-0.15 -0.14 0.04" rpy="0 0 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="engine_link${name_suffix}" />
+    </joint>
+
+    <link name="exhaust_link${name_suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_exhaust.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="exhaust_colour"/>
+            </visual>
+    </link>
+
+    <joint name="exhaust_joint${name_suffix}" type="fixed">
+        <origin xyz="-0.24 0.112 0.017" rpy="0 0 0" />
+        <parent link="engine_link${name_suffix}" />
+        <child link="exhaust_link${name_suffix}" />
+    </joint>
+
+    <!-- [> Bumpers <] -->
+    <link name="rear_bumper_link${name_suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_rear_bumper.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="rear_bumper_colour"/>
+            </visual>
+            <collision>
+                <origin xyz="${scale*1.036} 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${scale*5.4} ${scale*41.4} ${scale*6.7}" />
+                </geometry>
+            </collision>
+    </link>
+
+    <joint name="rear_bumper_joint${name_suffix}" type="fixed">
+        <origin xyz="-0.47 0 0.017" rpy="0 0 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="rear_bumper_link${name_suffix}" />
+    </joint>
+
+    <link name="right_bumper_link${name_suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_right_bumper.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="right_bumper_colour"/>
+            </visual>
+            <collision>
+                <origin xyz="${scale*2.4} 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${scale*23} ${scale*6.6} ${scale*4.8}" />
+                </geometry>
+            </collision>
+    </link>
+
+    <joint name="right_bumper_joint${name_suffix}" type="fixed">
+        <origin xyz="-0.055 -0.31 0.02" rpy="0 0 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="right_bumper_link${name_suffix}" />
+    </joint>
+
+    <link name="left_bumper_link${name_suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_left_bumper.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="left_bumper_colour"/>
+            </visual>
+            <collision>
+                <origin xyz="${scale*1.8} 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${scale*22.8} ${scale*5} ${scale*4.8}" />
+                </geometry>
+            </collision>
+    </link>
+
+    <joint name="left_bumper_joint${name_suffix}" type="fixed">
+        <origin xyz="-0.055 0.29  0.02" rpy="0 0 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="left_bumper_link${name_suffix}" />
+    </joint>
+
+    <link name="inner_bumper_link${name_suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_inner_bumper.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="inner_bumper_colour"/>
+            </visual>
+            <collision>
+                <origin xyz="0 0 ${scale*1.4}" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${scale*7.8} ${scale*6} ${scale*8.2}" />
+                </geometry>
+            </collision>
+    </link>
+
+    <joint name="inner_bumper_joint${name_suffix}" type="fixed">
+        <origin xyz="0.136 -0.005  0.04" rpy="0 0 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="inner_bumper_link${name_suffix}" />
+    </joint>
+
+    <link name="front_bottom_bumper_link${name_suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_front_bottom_bumper.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="front_bottom_bumper_colour"/>
+            </visual>
+            <collision>
+                <origin xyz="${-1.3*scale} 0 ${scale*0.6}" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${scale*10} ${scale*34.5} ${scale*4.5}" />
+                </geometry>
+            </collision>
+    </link>
+
+    <joint name="front_bottom_bumper_joint${name_suffix}" type="fixed">
+        <origin xyz="0.52 0 0.01" rpy="0 0 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="front_bottom_bumper_link${name_suffix}" />
+    </joint>
+
+    <link name="front_mid_bumper_link${name_suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_front_mid_bumper.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="front_mid_bumper_colour"/>
+            </visual>
+            <collision>
+                <origin xyz="${-1.3*scale} 0 ${scale*0.6}" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${scale*10} ${scale*34.5} ${scale*4.5}" />
+                </geometry>
+            </collision>
+    </link>
+
+    <joint name="front_mid_bumper_joint${name_suffix}" type="fixed">
+        <origin xyz="0.52 0 0.03" rpy="0 0 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="front_mid_bumper_link${name_suffix}" />
+    </joint>
+
+    <link name="front_top_bumper_link${name_suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_front_top_bumper.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="front_top_bumper_colour"/>
+            </visual>
+            <collision>
+                <origin xyz="${1.7*scale} 0 ${-0.6*scale}" rpy="0 0.4 0"/>
+                <geometry>
+                    <box size="${scale*24.1} ${scale*9.5} ${scale*2.5}" />
+                </geometry>
+            </collision>
+    </link>
+
+    <joint name="front_top_bumper_joint${name_suffix}" type="fixed">
+        <origin xyz="0.36 -0.006 0.16" rpy="0 0 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="front_top_bumper_link${name_suffix}" />
+    </joint>
+
+    <link name="front_top_bumper_frame_link${name_suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_front_top_bumper_frame.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="front_top_bumper_frame_colour"/>
+            </visual>
+    </link>
+
+    <joint name="front_top_bumper_frame_joint${name_suffix}" type="fixed">
+        <origin xyz="0.37 -0.006 0.15" rpy="0 0 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="front_top_bumper_frame_link${name_suffix}" />
+    </joint>
+
+    <!-- [> Seat <] -->
+    <link name="seat_link${name_suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_seat.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="seat_colour"/>
+            </visual>
+    </link>
+
+    <joint name="seat_joint${name_suffix}" type="fixed">
+        <origin xyz="-0.106 0 0.041" rpy="0 0 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="seat_link${name_suffix}" />
+    </joint>
+
+    <link name="driver_head_link${name_suffix}">
+        <inertial>
+            <mass value="50"/>
+            <origin xyz="0 0 0"/>
+            <inertia  ixx="0.15346960325424192" ixy="0" ixz="0" iyy="0.16744057080201938" iyz="0" izz="0.11325685412030846" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find kart_description)/meshes/driver_helmet.stl" scale="${scale} ${scale} ${scale}"/>
+            </geometry>
+            <material name="driver_helmet_colour"/>
+        </visual>
+    </link>
+
+    <joint name="driver_head_joint${name_suffix}" type="revolute">
+        <origin xyz="-0.1 0 0.26" rpy="0 0 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="driver_head_link${name_suffix}" />
+        <axis xyz="0 0 -1" />
+        <limit lower="${-PI/4}" upper="${PI/4}" effort="1000" velocity="10"/>
+        <dynamics damping="10" friction="0.3" />
+    </joint>
+
+    <!-- Rear transmission system -->
+    <link name="rear_differential_axle_link${name_suffix}">
+        <inertial>
+            <mass value="30"/>
+            <origin xyz="0 0 0"/>
+            <inertia  ixx="0.673567363810505" ixy="0" ixz="0" iyy="0.006492543488674483" iyz="0" izz="0.6734024575640083" />
+        </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find kart_description)/meshes/kart_rear_differential_axle.stl" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+                <material name="rear_differential_axle_colour"/>
+            </visual>
+    </link>
+
+    <joint name="rear_differential_axle_joint${name_suffix}" type="fixed">
+        <origin xyz="-0.31 0 0.03" rpy="0 0 0" />
+        <parent link="chassis_link${name_suffix}" />
+        <child link="rear_differential_axle_link${name_suffix}" />
+    </joint>
+
+    <!-- Wheels -->
+    <xacro:front_wheel wheel_prefix="front_right_" name_suffix="${name_suffix}" parent_link="front_right_wheel_base_link${name_suffix}" scale="${scale}">
+        <origin xyz="0 0.09 0" rpy="${PI} 0 0"/>
+    </xacro:front_wheel>
+
+    <xacro:front_wheel wheel_prefix="front_left_" name_suffix="${name_suffix}" parent_link="front_left_wheel_base_link${name_suffix}" scale="${scale}">
+        <origin xyz="0 0.09 0" rpy="${PI} 0 0"/>
+    </xacro:front_wheel>
+
+    <xacro:rear_wheel wheel_prefix="rear_right_" name_suffix="${name_suffix}" parent_link="rear_differential_axle_link${name_suffix}" scale="${scale}" velocity_factor="1.0">
+        <origin xyz="0 -0.28 0" rpy="0 0 0"/>
+    </xacro:rear_wheel>
+
+    <xacro:rear_wheel wheel_prefix="rear_left_" name_suffix="${name_suffix}" parent_link="rear_differential_axle_link${name_suffix}" scale="${scale}" velocity_factor="-1.0">
+        <origin xyz="0 0.28 0" rpy="-${PI} 0 0"/>
+    </xacro:rear_wheel>
+
+    <!-- Sensors -->
+    <xacro:stereo_camera camera_prefix="head_" name_suffix="${name_suffix}" parent_link="driver_head_link${name_suffix}">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:stereo_camera>
+
+    <xacro:stereo_camera camera_prefix="front_bumper_" name_suffix="${name_suffix}" parent_link="front_top_bumper_link${name_suffix}">
+        <origin xyz="0.05 0 0" rpy="0 0 0"/>
+    </xacro:stereo_camera>
+
+    <xacro:stereo_camera camera_prefix="rear_bumper_" name_suffix="${name_suffix}" parent_link="rear_bumper_link${name_suffix}">
+        <origin xyz="-0.05 0 0" rpy="0 0 ${PI}"/>
+    </xacro:stereo_camera>
+
+    <xacro:laser laser_prefix="front_bumper_" name_suffix="${name_suffix}" parent_link="front_bottom_bumper_link${name_suffix}">
+        <origin xyz="0.08 0 0" rpy="0 0 ${-PI/2}"/>
+    </xacro:laser>
+
+    <xacro:kart_imu imu_prefix="base_" name_suffix="${name_suffix}" parent_link="chassis_link${name_suffix}">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:kart_imu>
+
+    <!-- Gazebo -->
+    <xacro:gazebo_simulation simulation_controllers="$(find kart_simulation)/config/controllers.yaml" name_suffix="${name_suffix}"/>
+
+    </xacro:macro>
+</robot>

@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<robot name="stereo_camera" xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:macro name="stereo_camera" params="camera_prefix name_suffix parent_link *joint_pose">
+        <link name="${camera_prefix}camera_link${name_suffix}"/>
+        <joint name="${camera_prefix}camera_joint${name_suffix}" type="fixed">
+            <xacro:insert_block name="joint_pose"/>
+            <parent link="${parent_link}"/>
+            <child link="${camera_prefix}camera_link${name_suffix}" />
+        </joint>
+
+        <link name="${camera_prefix}camera_optical_link${name_suffix}"/>
+        <joint name="${camera_prefix}camera_optical_joint${name_suffix}" type="fixed">
+            <origin xyz="0 0 0" rpy="-${PI/2} 0 -${PI/2}"/>
+            <parent link="${camera_prefix}camera_link${name_suffix}"/>
+            <child link="${camera_prefix}camera_optical_link${name_suffix}" />
+        </joint>
+
+        <gazebo reference="${camera_prefix}camera_link${name_suffix}">
+            <sensor type="depth" name="${camera_prefix}camera${name_suffix}">
+                <always_on>true</always_on>
+                <update_rate>10</update_rate>
+                <camera name="${camera_prefix}camera${name_suffix}">
+                    <horizontal_fov>1.2</horizontal_fov>
+                    <image>
+                        <width>640</width>
+                        <height>480</height>
+                        <format>R8G8B8</format>
+                    </image>
+                    <depth_camera>
+                    </depth_camera>
+                    <clip>
+                        <near>0.02</near>
+                        <far>12</far>
+                    </clip>
+                    <distortion>
+                        <k1>0.0</k1>
+                        <k2>0.0</k2>
+                        <k3>0.0</k3>
+                        <p1>0.0</p1>
+                        <p2>0.0</p2>
+                    </distortion>
+                </camera>
+                <plugin name="simulated_${camera_prefix}camera${name_suffix}" filename="libgazebo_ros_camera.so">
+                    <ros>
+                        <namespace>racer${name_suffix}</namespace>
+                        <!-- <remapping>~/out:=racer${name_suffix}/imu</remapping> -->
+                    </ros>
+                    <camera_name>${camera_prefix}camera${name_suffix}</camera_name>
+                    <frame_name>${camera_prefix}camera_optical_link${name_suffix}</frame_name>
+                    <hack_baseline>0.07</hack_baseline>
+                    <min_depth>0.001</min_depth>
+                </plugin>
+            </sensor>
+        </gazebo>
+
+	</xacro:macro>
+</robot>

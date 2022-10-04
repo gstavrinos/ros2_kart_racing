@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot name="kart_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:arg name="name_suffix" default="_00" />
+    <xacro:arg name="team_colours_file" default="$(find kart_description)/urdf/include/colours/roboskel_team_colours.urdf.xacro" />
+    <xacro:include filename="$(arg team_colours_file)"/>
+
+    <xacro:include filename="$(find kart_description)/urdf/kart.urdf.xacro"/>
+
+    <xacro:kart name_suffix="$(arg name_suffix)">
+    </xacro:kart>
+    <xacro:team_colours>
+    </xacro:team_colours>
+
+</robot>

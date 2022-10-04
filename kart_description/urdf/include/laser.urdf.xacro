@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<robot name="laser" xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:macro name="laser" params="laser_prefix name_suffix parent_link *joint_pose">
+        <link name="${laser_prefix}laser_link${name_suffix}"/>
+        <joint name="${laser_prefix}laser_joint${name_suffix}" type="fixed">
+            <xacro:insert_block name="joint_pose"/>
+            <parent link="${parent_link}"/>
+            <child link="${laser_prefix}laser_link${name_suffix}" />
+        </joint>
+        <gazebo reference="${laser_prefix}laser_link${name_suffix}">
+            <sensor name="laser" type="ray">
+                <always_on>true</always_on>
+                <visualize>true</visualize>
+                <update_rate>5</update_rate>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>180</samples>
+                            <resolution>1.000000</resolution>
+                            <min_angle>0.000000</min_angle>
+                            <max_angle>3.1415</max_angle>
+                        </horizontal>
+                    </scan>
+                    <range>
+                        <min>0.120000</min>
+                        <max>6.5</max>
+                        <resolution>0.015000</resolution>
+                    </range>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.01</stddev>
+                    </noise>
+                </ray>
+                <plugin name="scan" filename="libgazebo_ros_ray_sensor.so">
+                    <ros>
+                        <remapping>~/out:=/racer${name_suffix}/${laser_prefix}scan</remapping>
+                    </ros>
+                    <output_type>sensor_msgs/LaserScan</output_type>
+                    <frame_name>${laser_prefix}laser_link${name_suffix}</frame_name>
+                </plugin>
+            </sensor>
+        </gazebo>
+
+	</xacro:macro>
+</robot>

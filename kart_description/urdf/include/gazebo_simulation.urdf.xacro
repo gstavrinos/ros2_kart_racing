@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<robot name="kart" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:property name="PI" value="3.1415926535897931"/>
+	<xacro:macro name="gazebo_simulation" params="simulation_controllers name_suffix">
+
+        <ros2_control name="GazeboSystem" type="system">
+            <hardware>
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+            </hardware>
+            <joint name="driver_head_joint${name_suffix}">
+                <command_interface name="position" >
+                    <param name="min">-${PI/4}</param>
+                    <param name="max">${PI/4}</param>
+                </command_interface>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+            </joint>
+        </ros2_control>
+
+        <gazebo>
+            <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+                <!-- NOTE this is not the robot_description topic, but the param, eehhhhhh... -->
+                <robot_param>robot_description</robot_param>
+                <robot_param_node>robot_state_publisher${name_suffix}</robot_param_node>
+                <parameters>${simulation_controllers}</parameters>
+            </plugin>
+        </gazebo>
+                
+        <gazebo>
+
+            <plugin name="gazebo_ros_ackermann_drive" filename="libgazebo_ros_ackermann_drive.so">
+                <ros>
+                    <namespace>racer${name_suffix}</namespace>
+                    <!-- <remapping>cmd_vel:=cmd_demo</remapping> -->
+                    <!-- <remapping>odom:=odom_demo</remapping> -->
+                    <!-- <remapping>distance:=distance_demo</remapping> -->
+                </ros>
+                <update_rate>100.0</update_rate>
+                <front_left_joint>front_left_wheel${name_suffix}</front_left_joint>
+                <front_right_joint>front_right_wheel${name_suffix}</front_right_joint>
+                <rear_left_joint>rear_left_wheel${name_suffix}</rear_left_joint>
+                <rear_right_joint>rear_right_wheel${name_suffix}</rear_right_joint>
+                <left_steering_joint>front_left_wheel_base_joint${name_suffix}</left_steering_joint>
+                <right_steering_joint>front_right_wheel_base_joint${name_suffix}</right_steering_joint>
+                <steering_wheel_joint>steering_wheel_joint${name_suffix}</steering_wheel_joint>
+                <max_steer>${PI/5}</max_steer>
+                <max_steering_angle>${PI/5}</max_steering_angle>
+                <max_speed>100</max_speed>
+                <min_speed>-1</min_speed>
+                <left_steering_pid_gain>10000 0 1</left_steering_pid_gain>
+                <left_steering_i_range>0 0</left_steering_i_range>
+                <right_steering_pid_gain>10000 0 1</right_steering_pid_gain>
+                <right_steering_i_range>0 0</right_steering_i_range>
+                <linear_velocity_pid_gain>100 0 1</linear_velocity_pid_gain>
+                <linear_velocity_i_range>0 0</linear_velocity_i_range>
+                <publish_odom>true</publish_odom>
+                <publish_odom_tf>true</publish_odom_tf>
+                <publish_wheel_tf>true</publish_wheel_tf>
+                <publish_distance>true</publish_distance>
+                <odometry_frame>world</odometry_frame>
+                <robot_base_frame>base_link${name_suffix}</robot_base_frame>
+            </plugin>
+        </gazebo>
+    </xacro:macro>
+</robot>

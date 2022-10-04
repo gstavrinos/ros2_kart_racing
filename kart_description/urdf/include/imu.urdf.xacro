@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<robot name="imu" xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:macro name="kart_imu" params="imu_prefix name_suffix parent_link *joint_pose">
+        <link name="${imu_prefix}imu_link${name_suffix}"/>
+        <joint name="${imu_prefix}imu_joint${name_suffix}" type="fixed">
+            <xacro:insert_block name="joint_pose"/>
+            <parent link="${parent_link}"/>
+            <child link="${imu_prefix}imu_link${name_suffix}" />
+        </joint>
+
+        <gazebo reference="${imu_prefix}imu_link${name_suffix}">
+            <sensor type="imu" name="${imu_prefix}imu${name_suffix}">
+                <always_on>true</always_on>
+                <update_rate>100</update_rate>
+                <visualize>true</visualize>
+                <imu>
+                    <angular_velocity>
+                        <x>
+                            <noise type="gaussian">
+                                <mean>0.0</mean>
+                                <stddev>2e-4</stddev>
+                                <bias_mean>0.0000075</bias_mean>
+                                <bias_stddev>0.0000008</bias_stddev>
+                            </noise>
+                        </x>
+                        <y>
+                            <noise type="gaussian">
+                                <mean>0.0</mean>
+                                <stddev>2e-4</stddev>
+                                <bias_mean>0.0000075</bias_mean>
+                                <bias_stddev>0.0000008</bias_stddev>
+                            </noise>
+                        </y>
+                        <z>
+                            <noise type="gaussian">
+                                <mean>0.0</mean>
+                                <stddev>2e-4</stddev>
+                                <bias_mean>0.0000075</bias_mean>
+                                <bias_stddev>0.0000008</bias_stddev>
+                            </noise>
+                        </z>
+                    </angular_velocity>
+                    <!-- <linear_acceleration> -->
+                        <!-- <x> -->
+                            <!-- <noise type="gaussian"> -->
+                                <!-- <mean>0.0</mean> -->
+                                <!-- <stddev>1.7e-2</stddev> -->
+                                <!-- <bias_mean>0.1</bias_mean> -->
+                                <!-- <bias_stddev>0.001</bias_stddev> -->
+                            <!-- </noise> -->
+                        <!-- </x> -->
+                        <!-- <y> -->
+                            <!-- <noise type="gaussian"> -->
+                                <!-- <mean>0.0</mean> -->
+                                <!-- <stddev>1.7e-2</stddev> -->
+                                <!-- <bias_mean>0.1</bias_mean> -->
+                                <!-- <bias_stddev>0.001</bias_stddev> -->
+                            <!-- </noise> -->
+                        <!-- </y> -->
+                        <!-- <z> -->
+                            <!-- <noise type="gaussian"> -->
+                                <!-- <mean>0.0</mean> -->
+                                <!-- <stddev>1.7e-2</stddev> -->
+                                <!-- <bias_mean>0.1</bias_mean> -->
+                                <!-- <bias_stddev>0.001</bias_stddev> -->
+                            <!-- </noise> -->
+                        <!-- </z> -->
+                    <!-- </linear_acceleration> -->
+                </imu>
+                <plugin name="simulated_${imu_prefix}imu${name_suffix}" filename="libgazebo_ros_imu_sensor.so">
+                    <ros>
+                        <!-- <namespace>/</namespace> -->
+                        <remapping>~/out:=racer${name_suffix}/imu</remapping>
+                    </ros>
+                    <initial_orientation_as_reference>false</initial_orientation_as_reference>
+                </plugin>
+            </sensor>
+        </gazebo>
+
+	</xacro:macro>
+</robot>
