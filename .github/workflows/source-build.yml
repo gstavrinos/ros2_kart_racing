@@ -14,8 +14,8 @@ jobs:
           fetch-depth: 0
       - name: Setting up ROS
         uses: ros-tooling/setup-ros@v0.4
-          with:
-            required-ros-distributions: humble
+        with:
+          required-ros-distributions: humble
       - name: Making sure the package builds (colcon build)
         uses: ros-tooling/action-ros-ci@v0.2
         with:
