@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot name="gate" xmlns:xacro="http://ros.org/wiki/xacro">
+	<xacro:macro name="gate" params="name_suffix gate_prefix parent_link scale *joint_pose">
+        <link name="${gate_prefix}gate_link${name_suffix}">
+        <inertial>
+            <mass value="100"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia  ixx="6.997767154121414" ixy="0" ixz="0" iyy="17.876069102859596" iyz="0" izz="18.49883625698101" />
+        </inertial>
+			<visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+                    <mesh filename="file://$(find race_tracks)/meshes/gate.dae" scale="${scale} ${scale} ${scale}"/>
+				</geometry>
+			</visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="file://$(find race_tracks)/meshes/gate.dae" scale="${scale} ${scale} ${scale}"/>
+                </geometry>
+            </collision>
+		</link>
+
+        <!-- This should have been a fixed joint, but gazebo merges all fixed joints into a single one, to save resources. We can't have that here. -->
+        <joint name="${gate_prefix}gate${name_suffix}" type="revolute">
+            <parent link="${parent_link}"/>
+            <child link="${gate_prefix}gate_link${name_suffix}"/>
+            <axis xyz="1 0 0" />
+            <dynamics damping="10" friction="0" />
+            <limit lower="0" upper="0" effort="1" velocity="1"/>
+			<xacro:insert_block name="joint_pose"/>
+        </joint>
+
+	</xacro:macro>
+</robot>
