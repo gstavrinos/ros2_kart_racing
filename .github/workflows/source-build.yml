@@ -1,0 +1,29 @@
+name: ros2_kart_racing_source_builder
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: gstavrinos:ros2ez
+    steps:
+      - name: Checking out the repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setting up ROS
+        uses: ros-tooling/setup-ros@v0.4
+          with:
+            required-ros-distributions: humble
+      - name: Making sure the package builds (colcon build)
+        uses: ros-tooling/action-ros-ci@v0.2
+        with:
+          target-ros2-distro: humble
+          skip-tests: true
+          colcon-defaults: |
+            {
+              "build": {
+                "symlink-install": true
+              }
+            }
