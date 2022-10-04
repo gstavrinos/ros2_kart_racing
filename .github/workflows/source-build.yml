@@ -1,4 +1,4 @@
-name: ros2_kart_racing_source_builder
+name: Source Build
 on:
   push:
     branches:
