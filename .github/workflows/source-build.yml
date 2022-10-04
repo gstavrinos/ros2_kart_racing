@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: gstavrinos:ros2ez
+    container: gstavrinos/ros2ez
     steps:
       - name: Checking out the repository
         uses: actions/checkout@v3
