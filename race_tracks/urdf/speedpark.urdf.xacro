@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<robot name="speedpark" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:property name="PI" value="3.1415926535897931"/>
+    <xacro:property name="scale" value="0.4"/>
+    <xacro:include filename="$(find race_tracks)/urdf/gate.urdf.xacro"/>
+
+    <material name="road_colour">
+        <color rgba="0.3 0.3 0.3 1"/>
+    </material>
+
+    <material name="barrier_colour">
+        <color rgba="0.7 0.7 0.7 1"/>
+    </material>
+
+    <material name="off_track_colour">
+        <color rgba="0.1 0.5 0.1 1"/>
+    </material>
+
+    <link name="world"/>
+
+    <link name="track_base_link"/>
+    <joint name="track_to_world_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <parent link="world" />"
+        <child link="track_base_link" />"
+    </joint>
+
+    <link name="track_road_link">
+        <inertial>
+            <mass value="100"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia  ixx="6.997767154121414" ixy="0" ixz="0" iyy="17.876069102859596" iyz="0" izz="18.49883625698101" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find race_tracks)/meshes/speedpark_barrier.stl" scale="${scale} ${scale} ${scale}"/>
+            </geometry>
+            <material name="road_colour"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find race_tracks)/meshes/speedpark_barrier_cubed.stl" scale="${scale} ${scale} ${scale}"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="road_to_base_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <parent link="track_base_link" />"
+        <child link="track_road_link" />"
+    </joint>
+
+    <link name="track_road_plane_link">
+        <inertial>
+            <mass value="100"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia  ixx="6.997767154121414" ixy="0" ixz="0" iyy="17.876069102859596" iyz="0" izz="18.49883625698101" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find race_tracks)/meshes/speedpark_road.dae" scale="${scale} ${scale} ${scale}"/>
+            </geometry>
+            <material name="road_colour"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 ${-0.47*scale}" rpy="0 0 0"/>
+            <geometry>
+                <box size="${scale*100} ${scale*111} ${scale*0.25}"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="road_plane_to_base_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <parent link="track_base_link" />"
+        <child link="track_road_plane_link" />"
+    </joint>
+
+    <xacro:gate gate_prefix="gate_" name_suffix="_03" parent_link="track_road_link" scale="${1.2*scale}">
+        <origin xyz="-9.3 -5.05 1.0" rpy="0 0 0.75"/>
+    </xacro:gate>
+
+    <xacro:gate gate_prefix="gate_" name_suffix="_02" parent_link="track_road_link" scale="${1.2*scale}">
+        <origin xyz="-0.7827 23.7706 1.0" rpy="0 0 1.7"/>
+    </xacro:gate>
+
+    <xacro:gate gate_prefix="gate_" name_suffix="_01" parent_link="track_road_link" scale="${1.25*scale}">
+        <origin xyz="30.3955 16.0 1.0" rpy="0 0 0.768953"/>
+    </xacro:gate>
+
+    <gazebo reference="track_road_plane_link">
+            <mu1 value="2.0"/>
+            <mu2 value="2.0"/>
+            <kp  value="1e8" />
+            <!-- <kd  value="1.0" /> -->
+            <!-- <fdir1 value="1 1 1"/> -->
+    </gazebo>
+
+    <gazebo reference="track_road_link">
+        <material>Gazebo/Black</material>
+    </gazebo>
+    
+    <gazebo reference="track_barriers_link">
+        <material>Gazebo/Gray</material>
+    </gazebo>
+    
+    <gazebo reference="off_track_link">
+        <material>Gazebo/Grass</material>
+    </gazebo>
+
+    <gazebo>
+        <static>true</static>
+    </gazebo>
+
+</robot>
